@@ -225,6 +225,7 @@ export default function Main(){
                       data: daysFalseCount
                       }
                   ]}
+                  locationCall='main'
                   dayList={daysList}
                   sx={{ height: '100%' }}
                   />

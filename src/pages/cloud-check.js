@@ -50,7 +50,7 @@ export default function Main(){
     };
 
     const GetLogData = async() => {
-        const getLogData = await sendToSpring("/kafka/findByServicePageReverse/cloudCheck/0", "GET", "", "");
+        const getLogData = await sendToSpring("/kafka/findByServicePageReverse/cloudCheck/0/10", "GET", "", "");
         var tmpList = [];
         for(const idx in getLogData.data){
             let tmpData = {
@@ -61,7 +61,7 @@ export default function Main(){
                     name: getLogData.data[idx].sender,
                     content: getLogData.data[idx].content,
                 },
-                createdAt: getLogData.data[idx].unix_time,
+                createdAt: getLogData.data[idx].unixTime,
                 status: getLogData.data[idx].type ? 'true' : 'false'
             }
             tmpList.push(tmpData);
@@ -146,6 +146,7 @@ export default function Main(){
                                     data: daysFalseCount
                                     }
                                 ]}
+                                locationCall='cloudCheck'
                                 dayList={daysList}
                                 sx={{ height: '100%' }}
                                 />
@@ -167,6 +168,7 @@ export default function Main(){
                                     data: []
                                     }
                                 ]}
+                                locationCall='cloudCheck'
                                 dayList={[]}
                                 sx={{ height: '100%' }}
                                 />
@@ -181,6 +183,7 @@ export default function Main(){
                             >
                                 <OverviewLatestOrders
                                 orders={logData}
+                                service='cloudCheck'
                                 sx={{ height: '100%' }}
                                 />
                             </Grid>
