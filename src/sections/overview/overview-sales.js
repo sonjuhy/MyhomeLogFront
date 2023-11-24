@@ -12,7 +12,9 @@ import {
 } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
 import { Chart } from 'src/components/chart';
-
+import ModalComponent from 'src/components/modal/logDetailModal';
+import Snackbar from '@mui/material/Snackbar';
+import { useState } from "react";
 const useChartOptions = (daysList) => {
   const theme = useTheme();
 
@@ -91,53 +93,69 @@ const useChartOptions = (daysList) => {
   };
 };
 
+
 export const OverviewSales = (props) => {
-  const { chartSeries, dayList, sx } = props;
+  const { chartSeries, dayList, locationCall, sx } = props;
   const chartOptions = useChartOptions(dayList);
   
+  const [open, setOpen] = useState(false);
+  const [snackBarOpen, setSnackBarOpen] = useState(false);
+  const handleOpen = () => {
+    if(locationCall !== 'main'){
+      setOpen(true);
+    }
+    else{
+      setSnackBarOpen(true);
+    }
+  };
+  const snackBarHandleClose = () => setSnackBarOpen(false);
 
   return (
-    <Card sx={sx}>
-      <CardHeader
-        action={(
+    <>
+    <Snackbar open={snackBarOpen} autoHideDuration={6000} onClose={snackBarHandleClose} message="메인에서는 작동하지 않습니다." />
+      <Card sx={sx}>
+        <CardHeader
+          // action={(
+          //   <Button
+          //     color="inherit"
+          //     size="small"
+          //     startIcon={(
+          //       <SvgIcon fontSize="small">
+          //         <ArrowPathIcon />
+          //       </SvgIcon>
+          //     )}
+          //   >
+          //     Sync
+          //   </Button>
+          // )}
+          title="True & False Chart"
+        />
+        <CardContent>
+          <Chart
+            height={350}
+            options={chartOptions}
+            series={chartSeries}
+            type="bar"
+            width="100%"
+          />
+        </CardContent>
+        <Divider />
+        {/* <CardActions sx={{ justifyContent: 'flex-end' }}>
           <Button
             color="inherit"
-            size="small"
-            startIcon={(
+            endIcon={(
               <SvgIcon fontSize="small">
-                <ArrowPathIcon />
+                <ArrowRightIcon />
               </SvgIcon>
             )}
+            size="small"
+            onClick={handleOpen}
           >
-            Sync
+            Overview
           </Button>
-        )}
-        title="True & False Chart"
-      />
-      <CardContent>
-        <Chart
-          height={350}
-          options={chartOptions}
-          series={chartSeries}
-          type="bar"
-          width="100%"
-        />
-      </CardContent>
-      <Divider />
-      <CardActions sx={{ justifyContent: 'flex-end' }}>
-        <Button
-          color="inherit"
-          endIcon={(
-            <SvgIcon fontSize="small">
-              <ArrowRightIcon />
-            </SvgIcon>
-          )}
-          size="small"
-        >
-          Overview
-        </Button>
-      </CardActions>
-    </Card>
+        </CardActions> */}
+      </Card>
+    </>
   );
 };
 

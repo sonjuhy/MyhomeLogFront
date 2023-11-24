@@ -12,88 +12,77 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-  Typography
+  Typography,
+  Collapse,
+  Grid,
+  CardContent
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { getInitials } from 'src/utils/get-initials';
+import IconButton from '@mui/material/IconButton';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import {useState} from 'react';
 
 export const CustomersTable = (props) => {
   const {
     count = 0,
     items = [],
-    onDeselectAll,
-    onDeselectOne,
     onPageChange = () => {},
     onRowsPerPageChange,
-    onSelectAll,
-    onSelectOne,
     page = 0,
     rowsPerPage = 0,
     selected = []
   } = props;
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
-
   return (
+    <>
     <Card>
       <Scrollbar>
         <Box sx={{ minWidth: 800 }}>
           <Table>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedAll}
-                    indeterminate={selectedSome}
-                    onChange={(event) => {
-                      if (event.target.checked) {
-                        onSelectAll?.();
-                      } else {
-                        onDeselectAll?.();
-                      }
-                    }}
-                  />
+              <TableCell>
+                  detail
                 </TableCell>
                 <TableCell>
-                  Name
+                  Id
                 </TableCell>
                 <TableCell>
-                  Email
+                  type
                 </TableCell>
                 <TableCell>
-                  Location
+                  content
                 </TableCell>
                 <TableCell>
-                  Phone
+                  day
                 </TableCell>
                 <TableCell>
-                  Signed Up
+                  time
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {items.map((customer) => {
                 const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
-
+                const createdAt = format(customer.createdAt, 'yyyy/MM/dd');
+                const [open, setOpen] = useState(false);
                 return (
+                  <>
                   <TableRow
                     hover
                     key={customer.id}
                     selected={isSelected}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={(event) => {
-                          if (event.target.checked) {
-                            onSelectOne?.(customer.id);
-                          } else {
-                            onDeselectOne?.(customer.id);
-                          }
-                        }}
-                      />
+                    <TableCell>
+                      <IconButton
+                        aria-label="expand row"
+                        size="small"
+                        onClick={() => setOpen(!open)}
+                      >
+                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                      </IconButton>
                     </TableCell>
                     <TableCell>
                       <Stack
@@ -102,26 +91,91 @@ export const CustomersTable = (props) => {
                         spacing={2}
                       >
                         <Avatar src={customer.avatar}>
-                          {getInitials(customer.name)}
+                          {/* {getInitials(customer.id)} */}
+                          {/* {customer.id} */}
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {customer.name}
+                          {customer.id}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {customer.email}
+                      {customer.type === 'true' && (
+                        <div style={{color:'blue'}}>
+                          {customer.type}
+                        </div>
+                      )}
+                      {customer.type === 'false' && (
+                        <div style={{color:'red'}}>
+                          {customer.type}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
-                      {customer.address.city}, {customer.address.state}, {customer.address.country}
-                    </TableCell>
-                    <TableCell>
-                      {customer.phone}
+                      <div style={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow:"hidden", display:"block", width:"40vw"}}>
+                        {customer.content}
+                      </div>
                     </TableCell>
                     <TableCell>
                       {createdAt}
                     </TableCell>
+                    <TableCell>
+                      {customer.time}
+                    </TableCell>
                   </TableRow>
+                  <TableRow>
+                    <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
+                      <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Card variant='outlined' style={{marginBottom: 15, marginTop: 15}}>
+                          <CardContent style={{backgroundColor:'#EDF4FF'}}>
+                            <Box sx={{ margin: 1 }}>
+                              <Typography variant="h6" gutterBottom component="div">
+                                Specific Info
+                              </Typography>
+                              <Table size="medium" aria-label="purchases" style={{backgroundColor:'white'}}>
+                                <TableHead>
+                                  <TableRow>
+                                    <TableCell align="center">Id</TableCell>
+                                    <TableCell align="center">UnixTime</TableCell>
+                                    <TableCell align="center">Sender</TableCell>
+                                    <TableCell align="center">Type</TableCell>
+                                    <TableCell align="center">Service</TableCell>
+                                    <TableCell align="center">Day</TableCell>
+                                    <TableCell align="center">Time</TableCell>
+                                  </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                  <TableRow key={customer.unixTime}>
+                                    <TableCell component="th" scope="row" align="center">
+                                      {customer.id}
+                                    </TableCell>
+                                    <TableCell align="center">{customer.unixTime}</TableCell>
+                                    <TableCell align="center" style={{display:'flex', justifyContent:'center'}}>{<Avatar src={customer.avatar}/>}</TableCell>
+                                    <TableCell align="center">{customer.service}</TableCell>
+                                    <TableCell align="center">{customer.service}</TableCell>
+                                    <TableCell align="center">{createdAt}</TableCell>
+                                    <TableCell align="center">{customer.time}</TableCell>
+                                  </TableRow>
+                                </TableBody>
+                              </Table>
+                              <Typography variant="h6" gutterBottom component="div" style={{marginTop:'15px'}}>
+                                Specific Content
+                              </Typography>
+                              <Card
+                                variant='outlined'
+                              >
+                                <CardContent style={{wordBreak:'break-all'}}>
+                                  {customer.content}
+                                </CardContent>
+                              </Card>
+                            </Box>
+                          </CardContent>
+                        </Card>
+                        
+                      </Collapse>
+                    </TableCell>
+                  </TableRow>
+                  </>
                 );
               })}
             </TableBody>
@@ -135,9 +189,10 @@ export const CustomersTable = (props) => {
         onRowsPerPageChange={onRowsPerPageChange}
         page={page}
         rowsPerPage={rowsPerPage}
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[10, 50, 100]}
       />
     </Card>
+    </>
   );
 };
 

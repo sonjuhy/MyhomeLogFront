@@ -17,6 +17,8 @@ import {
 } from '@mui/material';
 import { Scrollbar } from 'src/components/scrollbar';
 import { SeverityPill } from 'src/components/severity-pill';
+import NextLink from 'next/link';
+import {useRouter} from 'next/router';
 
 const statusMap = {
   true: 'success',
@@ -24,7 +26,15 @@ const statusMap = {
 };
 
 export const OverviewLatestOrders = (props) => {
-  const { orders = [], sx } = props;
+  const { orders = [], service, sx } = props;
+  const router = useRouter();
+
+  const handleButtonClick = () => {
+    router.push({
+      pathname: '/detail',
+      query: { service: service },
+    });
+  };
 
   return (
     <Card sx={sx}>
@@ -91,6 +101,9 @@ export const OverviewLatestOrders = (props) => {
           )}
           size="small"
           variant="text"
+          // LinkComponent={NextLink}
+          // href='/detail'
+          onClick={handleButtonClick}
         >
           View all
         </Button>
