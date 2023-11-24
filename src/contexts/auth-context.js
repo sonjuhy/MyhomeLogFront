@@ -1,5 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef } from 'react';
 import PropTypes from 'prop-types';
+import sendToSecuritySpring from 'src/modules/sendToSecuritySpring';
+import axios from 'axios';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -126,29 +128,57 @@ export const AuthProvider = (props) => {
       payload: user
     });
   };
-
+  const checkIdAndPassword = async (id, pw) => {
+    let link = process.env.BASE_SECURITY_URL+'/auth/signIn';
+    var result = false;
+    // console.log(id, pw);
+    await axios.post(link, {userId: 0,
+      id: id,
+      name: '',
+      password: pw,
+      accessToken: '',
+      refreshToken: '',
+      auth: ''})
+    .then(response =>{
+      console.log(response);
+      console.log(response.data.accessToken !== undefined);
+      console.log(response.data.accessToken !== '');
+      if(response.data.accessToken !== undefined && response.data.accessToken !== ''){
+        result = true;
+        return true;
+      }
+      else{
+        return false;
+      }
+    })
+    .catch(error => {return false;});
+    return result;
+  };
   const signIn = async (email, password) => {
-    if (email !== 'demo@devias.io' || password !== 'Password123!') {
+    const result = await checkIdAndPassword(email, password);
+    if(result === true) {
+      try {
+        window.sessionStorage.setItem('authenticated', 'true');
+      } catch (err) {
+        console.error(err);
+      }
+  
+      const user = {
+        id: '5e86809283e28b96d2d38537',
+        avatar: '/assets/avatars/avatar-anika-visser.png',
+        name: 'Anika Visser',
+        email: 'anika.visser@devias.io'
+      };
+  
+      dispatch({
+        type: HANDLERS.SIGN_IN,
+        payload: user
+      });
+    }
+    else{
       throw new Error('Please check your email and password');
     }
 
-    try {
-      window.sessionStorage.setItem('authenticated', 'true');
-    } catch (err) {
-      console.error(err);
-    }
-
-    const user = {
-      id: '5e86809283e28b96d2d38537',
-      avatar: '/assets/avatars/avatar-anika-visser.png',
-      name: 'Anika Visser',
-      email: 'anika.visser@devias.io'
-    };
-
-    dispatch({
-      type: HANDLERS.SIGN_IN,
-      payload: user
-    });
   };
 
   const signUp = async (email, name, password) => {
