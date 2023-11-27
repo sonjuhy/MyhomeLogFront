@@ -101,7 +101,7 @@ const Page = () => {
               value={method}
             >
               <Tab
-                label="Email"
+                label="Account"
                 value="email"
               />
             </Tabs>
@@ -161,16 +161,16 @@ const Page = () => {
                   onClick={handleSkip}
                 >
                   Skip authentication
-                </Button>
+                </Button> */}
                 <Alert
                   color="primary"
                   severity="info"
                   sx={{ mt: 3 }}
                 >
                   <div>
-                    You can use <b>demo@devias.io</b> and password <b>Password123!</b>
+                    If you lose your account, contact your administrator.
                   </div>
-                </Alert> */}
+                </Alert>
               </form>
             
           </div>

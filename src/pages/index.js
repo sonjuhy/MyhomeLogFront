@@ -212,6 +212,7 @@ export default function Main(){
             {daysTypeCountLoadingFinished && (
               <Grid
                   xs={12}
+                  md={6}
                   lg={8}
               >
                   <OverviewSales

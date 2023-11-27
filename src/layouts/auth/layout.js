@@ -60,6 +60,7 @@ export const Layout = (props) => {
           sx={{
             alignItems: 'center',
             background: 'radial-gradient(50% 50% at 50% 50%, #122647 0%, #090E23 100%)',
+            // backgroundImage: `url("/assets/auth-illustration.jpg")`,
             color: 'white',
             display: 'flex',
             justifyContent: 'center',
@@ -85,7 +86,7 @@ export const Layout = (props) => {
                 sx={{ color: '#15B79E' }}
                 target="_blank"
               >
-                Devias Kit
+                MyHome Log Site
               </Box>
             </Typography>
             <Typography
@@ -93,7 +94,7 @@ export const Layout = (props) => {
               sx={{ mb: 3 }}
               variant="subtitle1"
             >
-              A professional kit that comes with ready-to-use MUI components.
+              This is the Myhome Project logging system data verification site.
             </Typography>
             <img
               alt=""
