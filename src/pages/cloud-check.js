@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Box, Container, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
 
@@ -31,7 +31,6 @@ export default function Main(){
     const [logDataLoadingFinished, setLogDataLoadingFinished] = useState(false);
     const [totalTypeCountLoadingFinished, setTotalTypeCountLoadingFinished] = useState(false);
     const [daysTypeCountLoadingFinished, setDaysTypeCountLoadingFinished] = useState(false);
-    const loadFinishedCount = useRef(0);
     
 
     const GetTotalTypeCount = async() => {
@@ -95,9 +94,7 @@ export default function Main(){
         GetDaysTypeCount();
     }, []);
     useEffect(() => {
-        loadFinishedCount.current = loadFinishedCount.current + 1;
-        console.log("Load finished : " + loadFinishedCount.current);
-        if(loadFinishedCount.current === 3){
+        if(daysTrueCount.length && daysFalseCount.length && daysList.length){
             setTimeout(()=> setDaysTypeCountLoadingFinished(true), 100);
         }
     },[daysTrueCount, daysFalseCount, daysList]);

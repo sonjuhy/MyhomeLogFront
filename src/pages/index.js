@@ -1,5 +1,5 @@
 import Head from 'next/head';
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { subDays, subHours } from 'date-fns';
 import { Box, Container, Unstable_Grid2 as Grid } from '@mui/material';
 import { Layout as DashboardLayout } from 'src/layouts/dashboard/layout';
@@ -31,7 +31,6 @@ export default function Main(){
   const [totalTypeCountLoadingFinished, setTotalTypeCountLoadingFinished] = useState(false);  
   const [daysTypeCountLoadingFinished, setDaysTypeCountLoadingFinished] = useState(false);
   const [todayCountLoadingFinished, setTodayCountLoadingFinished] = useState(false);
-  const loadFinishedCount = useRef(0);
   
   const GetTodayCount = async() => {
     const pastDays = new Date(now);
@@ -121,8 +120,7 @@ export default function Main(){
   }, []);
 
   useEffect(() => {
-      loadFinishedCount.current = loadFinishedCount.current + 1;
-      if(loadFinishedCount.current === 3){
+      if(daysTrueCount.length && daysFalseCount.length && daysList.length){
           setTimeout(()=> setDaysTypeCountLoadingFinished(true), 100);
       }
   },[daysTrueCount, daysFalseCount, daysList]);
