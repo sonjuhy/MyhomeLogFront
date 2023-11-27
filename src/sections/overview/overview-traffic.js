@@ -106,9 +106,10 @@ export const OverviewTraffic = (props) => {
             <Image
               src={'/assets/logos/noData.png'}
               alt="cloud image"
-              width={250}
-              height={250}
-              style={{width:'90%', height:'90%'}}
+              width={0}
+              height={0}
+              sizes='250vw'
+              style={{width:'90%', height:'auto'}}
               loading="lazy"
             />
             <Typography
@@ -121,7 +122,7 @@ export const OverviewTraffic = (props) => {
         )}
         {!(chartSeries[0] === 0 && chartSeries[1] === 0) && (
           <Chart
-            height={300}
+            height={'250vh'}
             options={chartOptions}
             series={chartSeries}
             type="donut"

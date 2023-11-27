@@ -82,7 +82,7 @@ export const CustomersTable = (props) => {
           )}
         </TableCell>
         <TableCell>
-          <div style={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow:"hidden", display:"block", width:"40vw"}}>
+          <div style={{textOverflow:"ellipsis", whiteSpace:"nowrap", overflow:"hidden", display:"block", width:"30vw"}}>
             {customer.content}
           </div>
         </TableCell>
