@@ -1,25 +1,89 @@
-# 가져올 이미지를 정의
-FROM node:18
-# 경로 설정하기
+# FROM node:18-alpine
+
+# WORKDIR /usr/src/app
+
+# COPY package*.json ./
+
+# RUN npm i -y
+
+# COPY --from=deps /usr/src/app/node_modules ./node_modules
+# COPY . .
+
+# RUN npm run build
+
+# COPY --from=builder /usr/src/app/public ./public
+
+# COPY --from=builder --chown=nextjs:nodejs /usr/src/app/.next/standalone ./
+# COPY --from=builder --chown=nextjs:nodejs /usr/src/app/.next/static ./.next/static
+
+# EXPOSE 3000
+
+# CMD [ "npm", "run", "start"]
+FROM node:18-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
 WORKDIR /app
-# package.json 워킹 디렉토리에 복사 (.은 설정한 워킹 디렉토리를 뜻함)
-COPY package.json .
-# 명령어 실행 (의존성 설치)
-RUN npm install
-# 현재 디렉토리의 모든 파일을 도커 컨테이너의 워킹 디렉토리에 복사한다.
+
+# Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then yarn global add pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
+
+
+# Rebuild the source code only when needed
+FROM base AS builder
+
+ARG SERVER_ADDRESS
+ENV SERVER_ADDRESS=$SERVER_ADDRESS
+
+ARG SERVER_SECURITY_ADDRESS
+ENV SERVER_SECURITY_ADDRESS=$SERVER_SECURITY_ADDRESS
+
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# 각각의 명령어들은 한줄 한줄씩 캐싱되어 실행된다.
-# package.json의 내용은 자주 바뀌진 않을 거지만
-# 소스 코드는 자주 바뀌는데
-# npm install과 COPY . . 를 동시에 수행하면
-# 소스 코드가 조금 달라질때도 항상 npm install을 수행해서 리소스가 낭비된다.
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+# ENV NEXT_TELEMETRY_DISABLED 1
 
-# 3000번 포트 노출
+RUN yarn build
+
+# If using npm comment out above and use below instead
+# RUN npm run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
 EXPOSE 3000
 
-# npm start 스크립트 실행
-CMD ["npm", "start"]
+ENV PORT 3000
+# set hostname to localhost
+ENV HOSTNAME "0.0.0.0"
 
-# 그리고 Dockerfile로 docker 이미지를 빌드해야한다.
-# $ docker build .
+CMD ["node", "server.js"]
