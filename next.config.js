@@ -1,4 +1,5 @@
 const nextConfig = {
+  output: 'standalone',
   reactStrictMode: true,
   env:{
     BASE_URL: process.env.SERVER_ADDRESS,
