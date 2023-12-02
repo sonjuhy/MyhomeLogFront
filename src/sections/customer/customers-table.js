@@ -134,7 +134,7 @@ export const CustomersTable = (props) => {
                   <Card
                     variant='outlined'
                   >
-                    <CardContent style={{wordBreak:'break-all'}}>
+                    <CardContent style={{wordBreak:'pre-line'}}>
                       {customer.content}
                     </CardContent>
                   </Card>
